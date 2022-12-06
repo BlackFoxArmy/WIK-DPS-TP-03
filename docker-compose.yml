@@ -1,0 +1,56 @@
+# Version de l'API Docker 
+version: '3.8'
+
+services:
+  
+  typescript-maxime:
+
+    
+    build:
+      context: .
+      dockerfile: single-stage.dockerfile
+
+    # PORT
+    ports:
+      - '8080'
+
+    # Nombre de réplication souhaités du même container 
+    deploy:
+      replicas: 4 # Ici on déploie 4 fois le container au sein du service my_app
+    
+    # Rédemarrage automatique dans tous les cas lorsqu'un container s'arrête
+    restart: always
+
+    # Définir des variables d'environnement pour le service
+    environment:
+      - PORT=8080
+    
+    # Configure le réseau du service
+    # Il est accessible seulement via le réseau nommé
+    # front-network
+    networks:
+      - front-network
+
+
+  # LLe service proxy
+  proxy:
+
+    image: nginx:latest
+
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    
+    # Configurer les ports exposés sur le réseau et 
+    # le port-forwarding entre l'hôte et le service
+    ports:
+      - 8081:80
+
+    depends_on: 
+      - typescript-maxime
+    
+    networks:
+      - front-network
+
+networks:
+  front-network:
+    driver: bridge

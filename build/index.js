@@ -2,6 +2,7 @@
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 const http_1 = require("http");
+var os = require("os");
 // Method used to handle incoming requests
 const requestListener = function (req, res) {
     try {
@@ -9,6 +10,7 @@ const requestListener = function (req, res) {
         if (req.method === "GET" && req.url === "/ping") {
             res.setHeader("Content-Type", "application/json");
             res.write(JSON.stringify(req.headers));
+            console.log(os.hostname());
             res.end();
             // Else return HTTP 404
         }
